@@ -1,3 +1,7 @@
+### Time:
+- Lescond81
+- Wallaw-law
+
 # Manual de VelhaNova.asm
 
 ## Como funciona?
