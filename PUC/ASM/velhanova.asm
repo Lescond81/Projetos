@@ -3,315 +3,342 @@ title velhanova
 .stack 100h
 
 .data
-    turno db 1            ; 1 = jogador, 2 = IA
+    turno db 1 ; 1 = jogador, 2 = IA ou Jogador 2
+    modo_jogo db 1 ;1 = vs IA | 2 = vs Jogador 2
     ganha  db 0
-    msg_player_win db 13,10,'Voce venceu!$'
+
+    msg_menu db 13,10,'Escolha o modo de jogo:',13,10,'1 - Jogar contra a IA',13,10,'2 - Jogar contra outro jogador',13,10,'Opcao: $'
+    msg_player_win db 13,10,'Jogador 1 venceu!$'
+    msg_player2_win db 13,10,'Jogador 2 venceu!$'
     msg_ia_win db 13,10,'IA venceu!$'
     msg_empate db 13,10,'Empate!$'
-    ; 0 = vazio, 1 = X (jogador), 2 = O (IA)
-    tabu db 0,0,0,0,0,0,0,0,0
-    msg db 13,10,'Digite um numero de 1 a 9:  $'
+
+    msg db 13,10,'Jogador 1 - Digite um numero de 1 a 9:  $'
+    msg_turno2 db 13,10,'Jogador 2 - Digite um numero de 1 a 9:  $'
     erro db 13,10,'Entrada invalida$'
+
     pula db 13,10,'$'
-    ; tabela de linhas (cada 3 bytes = uma linha/coluna/diagonal)
+    tabu db 0,0,0,0,0,0,0,0,0
+
     linhas db 0,1,2, 3,4,5, 6,7,8, 0,3,6, 1,4,7, 2,5,8, 0,4,8, 2,4,6
     cantos db 0,2,6,8
+
 .code
-; MAIN: inicializa e entra no loop de jogo
 main proc
     mov ax,@data
     mov ds,ax
 
-    ; inicializar tabuleiro (todos zeros)
+;imprimindo o menu do jogo
+menu_jogo:
+    lea dx, msg_menu
+    mov ah,09h
+    int 21h
+
+    mov ah,01h
+    int 21h
+
+    cmp al, '1'
+    je selecionaIA
+    cmp al, '2'
+    je selecionaPVP
+    jmp menu_jogo
+
+selecionaIA:
+    mov byte ptr [modo_jogo], 1
+    jmp inicia
+
+selecionaPVP:
+    mov byte ptr [modo_jogo], 2
+    jmp inicia
+
+;inicializa o ttabuleiro
+inicia:
     lea si, tabu
     mov cx, 9
     xor bx, bx
-loopinicio:
+zeraTab:
     mov byte ptr [si+bx], 0
     inc bx
-    loop loopinicio
+    loop zeraTab
 
+;loop principal
 loop_jogo:
-    ; desenha tabuleiro
     call print_tabu
 
-    ; turno do jogador
     mov al, [turno]
     cmp al, 1
-    je turno_player
+    je turno_player1
 
-    ; turno da IA
+    ; turno 2 = IA ou Jogador 2
+    mov bl, [modo_jogo]
+    cmp bl, 1
+    je turno_IA
+    jmp turno_player2
+
+turno_player1:
+    call valida_marca
+    jmp dps_jogado
+
+turno_player2:
+    call valida_marca_j2
+    jmp dps_jogado
+
+turno_IA:
     call IA_jogar
     jmp dps_jogado
 
-turno_player:
-    ; lê e marca movimento do jogador (valida_marca deve validar e escrever 1)
-    call valida_marca
-
 dps_jogado:
-    ; verificar vencedor
-    call check_ganha    ; retorna AL = 0 (nenhum) / 1 (X=jogador) / 2 (O=IA)
-    cmp al, 0
-    jne ganhador
+    call check_ganha
+    cmp al,0
+    jne houve_ganhador
 
-    ; verificar empate
-    call jatem         ; AL = 1 se cheio, 0 se ainda esta vazio
-    cmp al, 1
+    call jatem
+    cmp al,1
     jne troca_turno
 
-    ; empate
     lea dx, msg_empate
-    mov ah, 09h
+    mov ah,09h
     int 21h
     jmp final_main
 
-ganhador:
-    cmp al, 1
-    je print_playerVence
-    ; se chegou aqui, al == 2
+houve_ganhador:
+    cmp al,1
+    je ganhou_p1
+    cmp al,2
+    je ganhou_p2
+
+ganhou_p1:
+    lea dx, msg_player_win
+    mov ah,09h
+    int 21h
+    jmp final_main
+
+ganhou_p2:
+    mov bl,[modo_jogo]
+    cmp bl,1
+    je ganhou_ia
+
+    lea dx, msg_player2_win
+    mov ah,09h
+    int 21h
+    jmp final_main
+
+ganhou_ia:
     lea dx, msg_ia_win
     mov ah,09h
     int 21h
     jmp final_main
 
-print_playerVence:
-    lea dx, msg_player_win
-    mov ah,09h
-    int 21h
-
-final_main:
-    ; espera qualquer tecla e encerra
-    mov ah, 08h
-    int 21h
-    mov ah,4Ch
-    mov al,0
-    int 21h
 
 troca_turno:
-    ; troca o turnoo: se era 1 -> 2, senão -> 1
-    mov al, [turno]
-    cmp al, 1
-    je set_IA
-    mov byte ptr [turno], 1
-    jmp loop_jogo
-set_IA:
-    mov byte ptr [turno], 2
+    mov al,[turno]
+    cmp al,1
+    je set_turno2
+    mov byte ptr [turno],1
     jmp loop_jogo
 
+set_turno2:
+    mov byte ptr [turno],2
+    jmp loop_jogo
+
+
+final_main:
+    mov ah,08h
+    int 21h
+    mov ah,4Ch
+    int 21h
 main endp
 
-; imprime a matriz 3x3 (usando AH=02 por caractere)
-print_board proc
-    lea si,tabu
-    mov cx,3          ; linhas
-row_loop:
-    mov bx,3          ; colunas
-col_loop:
-    mov dl,[si]
-    mov ah,02h
-    int 21h
-    ; espaço entre colunas
-    mov dl,' '
-    mov ah,02h
-    int 21h
-    inc si
-    dec bx
-    jnz col_loop
-    ; CR LF no fim da llinha
+;imprime o ttabuleiro
+print_tabu proc
+    push ax bx cx dx si
+
     mov dl,13
     mov ah,02h
     int 21h
     mov dl,10
-    mov ah,02h
-    int 21h
-    dec cx
-    jnz row_loop
-    ret
-print_board endp
-
-; rotina simples para imprimir o tabuleiro:
-; para cada célula: se 0 -> imprime (idx+1) char; se 1 -> 'X'; se 2 -> 'O'
-print_tabu proc
-    push ax
-    push bx
-    push cx
-    push dx
-    push si
-
-    ; pular uma linha antes do tabuleiro
-    mov dl, 13
-    mov ah, 02h
-    int 21h
-    mov dl, 10
-    mov ah, 02h
     int 21h
 
     lea si, tabu
-    mov cx, 3          ; linhas
-    mov bx, 0          ; índice base
-print_row:
-    mov di, 3          ; colunas
-print_col:
-    mov al, [si + bx]  ; valor da célula (0/1/2)
-    cmp al, 0
-    jne ta_cheio
-    ; imprimir número index+1
-    mov ah, 0
-    mov al, bl
-    mov dl, '1'
-    add dl, al
-    mov ah, 02h
+    mov cx, 3
+    mov bx, 0
+linha:
+    mov di, 3
+coluna:
+    mov al,[si+bx]
+    cmp al,0
+    jne cheio
+    mov dl,'1'
+    add dl,bl
+    mov ah,02h
     int 21h
-    jmp dps_print
-ta_cheio:
-    cmp al, 1
-    jne print_O
-    mov dl, 'X'
-    mov ah, 02h
+    jmp aposPrint
+
+cheio:
+    cmp al,1
+    jne imprimeO
+    mov dl,'X'
+    mov ah,02h
     int 21h
-    jmp dps_print
-print_O:
-    mov dl, 'O'
-    mov ah, 02h
+    jmp aposPrint
+imprimeO:
+    mov dl,'O'
+    mov ah,02h
     int 21h
-dps_print:
-    ; espaço
-    mov dl, ' '
-    mov ah, 02h
+
+aposPrint:
+    mov dl,' '
+    mov ah,02h
     int 21h
 
     inc bx
     dec di
-    jnz print_col
+    jnz coluna
 
-    ; CR LF
     mov dl,13
     mov ah,02h
     int 21h
     mov dl,10
-    mov ah,02h
     int 21h
 
     dec cx
-    jnz print_row
+    jnz linha
 
-    pop si
-    pop dx
-    pop cx
-    pop bx
-    pop ax
+    pop si dx cx bx ax
     ret
 print_tabu endp
 
-; Exemplo de leitura de entrada e marcação (usa representação 0/1/2)
-; lê tecla '1'..'9', converte para índice, verifica se livre (0) e marca com '1' (jogador)
+;player 1
 valida_marca proc
-    ; imprime prompt e lê AL (AH=01h)
     lea dx,msg
     mov ah,09h
     int 21h
 
     mov ah,01h
-    int 21h  ; AL = tecla lida
-    
+    int 21h
 
     cmp al,'1'
-    jb inval
+    jb inval1
     cmp al,'9'
-    ja inval
+    ja inval1
 
-    sub al,'1'      ; AL = 0...8
-    mov bl, al      ; guarda índice em BL
-    xor bx,bx
-    mov bl, al
-    mov al, [tabu + bx]
-    cmp al, 0
-    jne pos_ocupada
+    sub al,'1'
+    mov bl,al
+    mov al,[tabu+bx]
+    cmp al,0
+    jne ocupado1
 
-    ; marcar como jogador (1)
-    mov byte ptr [tabu + bx], 1
+    mov byte ptr [tabu+bx],1
     ret
 
-pos_ocupada:
-    ; mensagem simples de erro (poderia reiniciar leitura)
+ocupado1:
     lea dx,erro
     mov ah,09h
     int 21h
     ret
 
-inval:
+inval1:
     lea dx,erro
     mov ah,09h
     int 21h
     ret
 valida_marca endp
 
-; checa vencedor: usa tabela 'linhas' (3 índices por combinação)
-; retorna AL = 0 (nenhum), 1 (X) ou 2 (O)
+;player 2
+valida_marca_j2 proc
+    lea dx,msg_turno2
+    mov ah,09h
+    int 21h
+
+    mov ah,01h
+    int 21h
+
+    cmp al,'1'
+    jb inval2
+    cmp al,'9'
+    ja inval2
+
+    sub al,'1'
+    mov bl,al
+    mov al,[tabu+bx]
+    cmp al,0
+    jne ocupado2
+
+    mov byte ptr [tabu+bx],2
+    ret
+
+ocupado2:
+    lea dx,erro
+    mov ah,09h
+    int 21h
+    ret
+
+inval2:
+    lea dx,erro
+    mov ah,09h
+    int 21h
+    ret
+valida_marca_j2 endp
+
+;ve quem ganhou
 check_ganha proc
     lea si, linhas
     mov cx, 8
     mov al, 0
-check_loopGeral:
-    mov dl, [si]        ; idx1
-    mov dh, [si+1]      ; idx2
+check_loop:
+    mov dl,[si]
+    mov dh,[si+1]
 
-    lea di, tabu        ; DI = base de tabu
-    xor bh, bh
-    mov bl, [si]        ; offset = idx1
-    mov al, [di+bx]
-    cmp al, 0
-    je proximo
+    lea di, tabu
+    xor bh,bh
+    mov bl,[si]
+    mov al,[di+bx]
+    cmp al,0
+    je prox
 
-    xor bh, bh
-    mov bl, [si+1]      ; offset = idx2
-    mov ah, [di+bx]
-    cmp al, ah
-    jne proximo
+    xor bh,bh
+    mov bl,[si+1]
+    mov ah,[di+bx]
+    cmp al,ah
+    jne prox
 
-    xor bh, bh
-    mov bl, [si+2]      ; offset = idx3
-    mov ah, [di+bx]
-    cmp al, ah
-    jne proximo
+    xor bh,bh
+    mov bl,[si+2]
+    mov ah,[di+bx]
+    cmp al,ah
+    jne prox
 
-    ; vencedor em AL (1 ou 2)
     ret
-
-proximo:
-    add si, 3
+prox:
+    add si,3
     dec cx
-    jnz check_loopGeral
+    jnz check_loop
 
-    mov al, 0
+    mov al,0
     ret
 check_ganha endp
 
-; jatem: AL=1 se tabu cheio, AL=0 se existe algum vazio
+;vendo se o tabu ta cheio
 jatem proc
-    lea si, tabu
-    mov cx, 9
-    xor bx, bx
-ta_loop:
-    mov al, [si+bx]
-    cmp al, 0
-    je vazio_fim
+    lea si,tabu
+    mov cx,9
+    xor bx,bx
+loopJ:
+    mov al,[si+bx]
+    cmp al,0
+    je vazio
     inc bx
-    loop ta_loop
-    mov al, 1
+    loop loopJ
+    mov al,1
     ret
-vazio_fim:
-    mov al, 0
+vazio:
+    mov al,0
     ret
 jatem endp
 
+
 verif_linhaCompletar PROC
-    ; preserva regs, mas NÃO AX — AL tem o índice de retorno
-    push bx
-    push cx
-    push dx
-    push si
-    push di
+    push bx cx dx si di
 
     mov dl, al
     lea si, linhas
@@ -362,116 +389,88 @@ caso3:
     xor bh, bh
     mov al, [di+bx]
     cmp al, 0
-    jne proximo1
+    jne prox1
     mov bl, [si+1]
     xor bh, bh
     mov al, [di+bx]
     cmp al, dl
-    jne proximo1
+    jne prox1
     mov bl, [si+2]
     xor bh, bh
     mov al, [di+bx]
     cmp al, dl
-    jne proximo1
+    jne prox1
     mov al, [si]
     jmp achado
 
-proximo1:
+prox1:
     add si, 3
     dec cx
     jnz vl_loop
 
     mov al, 0FFh
-    jmp feito
+    jmp fim
 
 achado:
-    ; AL já tem o índice de retorno
-
-feito:
-    pop di
-    pop si
-    pop dx
-    pop cx
-    pop bx
+fim:
+    pop di si dx cx bx
     ret
 verif_linhaCompletar ENDP
 
 IA_jogar PROC
-    push ax
-    push bx
-    push cx
-    push dx
-    push si
-    push di
+    push ax bx cx dx si di
 
-    ; primeiro tenta ganhar
     mov al, 2
     call verif_linhaCompletar
     cmp al, 0FFh
-    jne joga_index
+    jne joga
 
-    ; dps tenta bloquear
     mov al, 1
     call verif_linhaCompletar
     cmp al, 0FFh
-    jne joga_index
+    jne joga
 
-    ; por fim jjoga no centro (4)
     lea si, tabu
     mov al, [si+4]
     cmp al, 0
-    jne ver_cantos
+    jne verCantos1
     mov al, 4
-    jmp joga_index
+    jmp joga
 
-ver_cantos:
+verCantos1:
     lea si, cantos
     lea di, tabu
     mov cx, 4
-cantos_loop:
-    mov bl, [si]
-    xor bh, bh
-    mov al, [di+bx]
-    cmp al, 0
-    je achado_corner
+cantoLoop:
+    mov bl,[si]
+    mov al,[di+bx]
+    cmp al,0
+    je cantoAchado
     inc si
-    loop cantos_loop
+    loop cantoLoop
 
     lea di, tabu
-    xor bx, bx
-    mov cx, 9
-outroLoop:
-    mov al, [di+bx]
-    cmp al, 0
-    jne proximo2
-    mov al, bl
-    jmp joga_index
-proximo2:
+    xor bx,bx
+    mov cx,9
+outro:
+    mov al,[di+bx]
+    cmp al,0
+    je joga
     inc bx
-    loop outroLoop
-    jmp final_IA
+    loop outro
+    jmp fimIA
 
-achado_corner:
+cantoAchado:
     mov al, bl
 
-joga_index:
-    ; AL = índice escolhido
-    lea di, tabu
-    xor bx, bx
+joga:
+    lea di,tabu
     mov bl, al
-    mov byte ptr [di+bx], 2    ; marca posição com 2 (IA)
+    mov byte ptr [di+bx],2
 
-    call print_tabu ; pra ver o que a IA fez
-
-    ; NÃO alterar [turno] aqui
-
-final_IA:
-    pop di
-    pop si
-    pop dx
-    pop cx
-    pop bx
-    pop ax
+fimIA:
+    pop di si dx cx bx ax
     ret
 IA_jogar ENDP
+
 end main
