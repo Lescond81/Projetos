@@ -21,27 +21,27 @@ possuem força zero
 
 # Estrutura de avaliação:
 ## Etapa 1: Levantamento sobre aplicativos existentes.
-▪ O que fazer? Pesquisar sobre o mercado de aplicativos que resolvem problemas de
++ O que fazer? Pesquisar sobre o mercado de aplicativos que resolvem problemas de
 treliças. Levantar idiomas, apontar as dificuldades e facilidades de uso
 comparativamente às boas práticas de experiência de usuário. Documentar o que
 foi encontrado por meio prints das telas
 ## Etapa 2: Implementação do método de cálculo de treliça.
-▪ O que fazer? Desenvolver um aplicativo/script onde o usuário possa inserir as
++ O que fazer? Desenvolver um aplicativo/script onde o usuário possa inserir as
 informações necessárias para a solução do seu problema de treliça (ver
 Requisitos); Implementar os cálculos necessários para a solução do problema.
 ## Etapa 3: Etapa de teste com público-alvo; Aprimoramento
-▪ O que fazer? Submeter o aplicativo para avaliação de estudantes de outras
++ O que fazer? Submeter o aplicativo para avaliação de estudantes de outras
 Engenharias (especialmente Mecânica e Civil).
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------
-▪ Aplicativo deverá ter passado pelas 3 Etapas previstas (+ 1 ponto)
-▪ Usuário deverá ser capaz de inserir as informações necessárias (ver Requisitos) (+ 1 ponto)
-▪ Aplicativo deverá calcular e resolver o problema proposto pelo usuário (equipe) (+ 1 ponto)
-▪ Aplicativo deverá, no dia da apresentação, resolver corretamente o exercício proposto pela banca (+ 2
++ Aplicativo deverá ter passado pelas 3 Etapas previstas (+ 1 ponto)
++ Usuário deverá ser capaz de inserir as informações necessárias (ver Requisitos) (+ 1 ponto)
++ Aplicativo deverá calcular e resolver o problema proposto pelo usuário (equipe) (+ 1 ponto)
++ Aplicativo deverá, no dia da apresentação, resolver corretamente o exercício proposto pela banca (+ 2
 ponto)
-▪ Usuário insere as informações usando uma interface gráfica (+ 1 ponto)
-▪ Respostas aparecem na interface gráfica (+ 1 ponto)
-▪ Aplicativo feito para mais de uma plataforma (+ 0,5 ponto)
-▪ Aplicativo disponível para download em stores como Google Play, Apple Store, etc. (+ 0,5 ponto)
-▪ Resolução de problemas de treliças tridimensionais (+ 1 ponto)
-▪ Nota individual dos membros da banca (+1 ponto)
++ Usuário insere as informações usando uma interface gráfica (+ 1 ponto)
++ Respostas aparecem na interface gráfica (+ 1 ponto)
++ Aplicativo feito para mais de uma plataforma (+ 0,5 ponto)
++ Aplicativo disponível para download em stores como Google Play, Apple Store, etc. (+ 0,5 ponto)
++ Resolução de problemas de treliças tridimensionais (+ 1 ponto)
++ Nota individual dos membros da banca (+1 ponto)
