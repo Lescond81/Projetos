@@ -11,9 +11,18 @@ const inputElement = document.getElementById('Funcao');
 
 // Botão para dar submit no valor digitado
 button.addEventListener('click', () => {
-  // Cria uma constante com o valor digitado
-  const inputValue = inputElement.value;
-  console.log(inputValue); 
+  const x =
+    Number(
+      document.getElementById("x").value
+      );
+
+  const y =
+    Number(
+      document.getElementById("y").value
+      );
+    board.create(
+        'point',
+        [x, y]
+    );
 });
 
-let D = board.create('point',[inputValue, inputValue], {name: 'D'});
