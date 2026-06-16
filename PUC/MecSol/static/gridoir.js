@@ -3,9 +3,11 @@ const button = document.getElementById('Butao');
 const inputElement = document.getElementById('Funcao');
 const Conectar = document.getElementById('connect');
 const Aplicar = document.getElementById('ap_forca');
+const Apoio = document.getElementById('Ap_apoio');
 let nos = []; // Vetor com os valores dos nós
 let barras = []; // Vetor com a conexão entre os nós
 let forcas = []; // Vetor com as forças
+let suporte = []; // Vetor com os suportes
 
 // Botão para dar submit no valor digitado
 button.addEventListener('click', () => {
@@ -95,7 +97,8 @@ Conectar.addEventListener('click', () => {
 
     conectar(prim,seg);
 });
-// Função para as forlas(teoricamente fuciona)
+
+// Função para as forlas(fuciona)
 function aplicarForca(
     noId,
     modul,
@@ -159,4 +162,74 @@ Aplicar.addEventListener('click', () => {
 
     aplicarForca(ponto,modulo,dir);
       
+});
+
+// Função para criar um pino trianglar
+function criarPino(noId){
+
+    const p =nos[noId];
+
+    board.create(
+        "segment",
+        [
+            [p.x-0.3,p.y-0.4],
+            [p.x,p.y]
+        ]
+    );
+
+    board.create(
+        "segment",
+        [
+            [p.x+0.3,p.y-0.4],
+            [p.x,p.y]
+        ]
+    );
+
+    board.create(
+        "segment",
+        [
+            [p.x-0.3,p.y-0.4],
+            [p.x+0.3,p.y-0.4]
+        ]
+    );
+};
+
+// Função para criar um rolete(por acaso triangular tambem...)
+function criarRolete(noId){
+
+    const r =nos(noId);
+
+    board.create(
+        "circle",
+        [
+            [nos[nodeId].x-0.15,
+             nos[nodeId].y-0.6],
+            0.05
+        ]
+    );
+
+    board.create(
+        "circle",
+        [
+            [nos[nodeId].x+0.15,
+             nos[nodeId].y-0.6],
+            0.05
+        ]
+    );
+};
+
+// Aplicar o apoio
+Apoio.addEventListener('click', () => {
+    let nos=
+    Number(
+        document.getElementById("pApoio").value
+    );
+    let tipo=
+        document.getElementById("tipo").value
+
+    if(tipo==="pino")
+        criarPino(nos); 
+    if(tipo==="rolete")
+        criarRolete(nos);
+
 });
