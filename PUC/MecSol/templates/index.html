@@ -2,8 +2,8 @@
     <html>
         <head>
             <title>Tavalendo</title>
-            <script src="../static/jsxgraphcore.js"></script>
-            <link rel="stylesheet" type="text/css" href="../static/jsxgraph.css">
+            <script src="jsxgraphcore.js"></script>
+            <link rel="stylesheet" type="text/css" href="jsxgraph.css">
         </head>
         <body>
 
@@ -38,6 +38,12 @@
                             <div>
                                 <input id="ponto" placeholder="Digite um ponto">
                                 <input id="modulo" placeholder="Digite a força">
+                                <select id="direcao">
+                                    <option value="up">↑</option>
+                                    <option value="down">↓</option>
+                                    <option value="left">←</option>
+                                    <option value="right">→</option>
+                                </select>
                                 <button id="ap_forca">Aplicar</button>
                             </div>
                             
@@ -51,5 +57,5 @@
             </article>
         </body>
         <!--Adicionar elementos-->
-        <script src="../static/gridoir.js"></script>
+        <script src="gridoir.js"></script>
     </html>
