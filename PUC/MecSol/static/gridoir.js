@@ -95,6 +95,51 @@ Conectar.addEventListener('click', () => {
 
     conectar(prim,seg);
 });
+// Função para as forlas(teoricamente fuciona)
+function aplicarForca(
+    noId,
+    modul,
+    direcao
+){
+
+    const node =
+        nos[noId];
+
+    let dx = 0;
+    let dy = 0;
+
+    if(direcao==="up")
+        dy = modul;
+
+    if(direcao==="down")
+        dy = -modul;
+
+    if(direcao==="right")
+        dx = modul;
+
+    if(direcao==="left")
+        dx = -modul;
+
+    const end =
+        board.create(
+            "point",
+            [
+                node.x + dx/100,
+                node.y + dy/100
+            ],
+            {
+                visible:true
+            }
+        );
+
+    board.create(
+        "arrow",
+        [
+            end,
+            node.object
+        ]
+    );
+}
 
 Aplicar.addEventListener('click', () => {
       let ponto =
@@ -107,5 +152,11 @@ Aplicar.addEventListener('click', () => {
         document.getElementById("modulo").value
       );
 
+      let dir =
+      Number(
+        document.getElementById("direcao").value
+      );
+
+    aplicarForca(ponto,modulo,dir);
       
 });
