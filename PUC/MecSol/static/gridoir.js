@@ -1,3 +1,4 @@
+
 // Parte para digitar no html e adicionar um ponto no gráfico
 const button = document.getElementById('Butao');
 const inputElement = document.getElementById('Funcao');
@@ -12,14 +13,10 @@ let suporte = []; // Vetor com os suportes
 // Botão para dar submit no valor digitado
 button.addEventListener('click', () => {
     const x =
-      Number(
-        document.getElementById("x").value
-      );
+      Number( document.getElementById("x").value);
 
     const y =
-      Number(
-        document.getElementById("y").value
-      );
+      Number(document.getElementById("y").value);
 
     let pointo =
       board.create(
@@ -98,7 +95,7 @@ Conectar.addEventListener('click', () => {
     conectar(prim,seg);
 });
 
-// Função para as forlas(fuciona)
+// Função para as forças(fuciona)
 function aplicarForca(
     noId,
     modul,
@@ -112,26 +109,27 @@ function aplicarForca(
     let dy = 0;
 
     if(direcao==="up")
-        dy = modul;
-
-    if(direcao==="down")
         dy = -modul;
 
-    if(direcao==="right")
-        dx = modul;
+    if(direcao==="down")
+        dy = modul;
 
-    if(direcao==="left")
+    if(direcao==="right")
         dx = -modul;
 
+    if(direcao==="left")
+        dx = modul;
+
+    const scale = 1;
     const end =
         board.create(
             "point",
             [
-                node.x + dx/100,
-                node.y + dy/100
+                node.x + (dx !== 0? Math.sign(dx) * scale: 0),
+                node.y + (dy !== 0? Math.sign(dy) * scale: 0)
             ],
             {
-                visible:true
+                visible:false
             }
         );
 
@@ -156,11 +154,11 @@ Aplicar.addEventListener('click', () => {
       );
 
       let dir =
-      Number(
-        document.getElementById("direcao").value
-      );
+        document.getElementById("direcao").value;
 
     aplicarForca(ponto,modulo,dir);
+
+    forcas.push({ no: ponto, modulo, direcao: dir});
       
 });
 
@@ -220,7 +218,7 @@ function criarRolete(noId){
 
 // Aplicar o apoio
 Apoio.addEventListener('click', () => {
-    let nos=
+    let pApoio=
     Number(
         document.getElementById("pApoio").value
     );
@@ -232,4 +230,64 @@ Apoio.addEventListener('click', () => {
     if(tipo==="rolete")
         criarRolete(nos);
 
+    suporte.push({ no: pApoio, tipo});
+
 });
+
+//resumo
+document.getElementById("resumo").addEventListener("click", () => {
+    let html = "";
+
+    // nos
+    html += "<h4>Nós</h4>";
+    if(nos.length === 0) html += "<p>Nenhum nó adicionado</p>";
+    nos.forEach(n => {
+        html += `<p>Nó ${n.id}: (${n.x}, ${n.y})</p>`;
+    });
+
+    // barras
+    html += "<h4>Barras</h4>";
+    if(barras.length === 0) html += "<p>Nenhuma barra adicionada</p>";
+    barras.forEach((b, i) => {
+        html += `<p>Barra ${i}: Nó ${b.start} → Nó ${b.end}</p>`;
+    });
+
+    // forças
+    html += "<h4>Forças</h4>";
+    if(forcas.length === 0) html += "<p>Nenhuma força aplicada</p>";
+    forcas.forEach((f, i) => {
+        const seta = { up:"↑", down:"↓", left:"←", right:"→" };
+        html += `<p>Força ${i}: Nó ${f.no} — ${f.modulo}N ${seta[f.direcao]}</p>`;
+    });
+
+    // apoios
+    html += "<h4>Suportes</h4>";
+    if(suporte.length === 0) html += "<p>Nenhum suporte adicionado</p>";
+    suporte.forEach((s, i) => {
+        html += `<p>Suporte ${i}: Nó ${s.no} — ${s.tipo}</p>`;
+    });
+
+    document.getElementById("conteudo-modal").innerHTML = html;
+    document.getElementById("modal").style.display = "block";
+    document.getElementById("overlay").style.display = "block";
+});
+
+// fechando modal
+document.getElementById("fechar").addEventListener("click", () => {
+    document.getElementById("modal").style.display = "none";
+    document.getElementById("overlay").style.display = "none";
+});
+
+
+/*document.getElementById("Calcular").addEventListener("click", async() => {
+    const Response = await fetch("http://127.0.0.1:5000/Back", {
+    method: 'POST',
+    headers: {"Content-type": 'application/JSON'},
+    body: JSON.stringify({nos, barras, forcas, suporte})
+});
+
+const info = await Response.json();
+console.log(resultado); // mudar para o resultado depois
+})*/
+
+

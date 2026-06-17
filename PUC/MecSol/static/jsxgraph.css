@@ -1,48 +1,21 @@
-/*
-    JSXGraph 1.12.2
-
-    Copyright 2008-2025
-        Matthias Ehmann,
-        Michael Gerhaeuser,
-        Carsten Miller,
-        Bianca Valentin,
-        Andreas Walter,
-        Alfred Wassermann,
-        Peter Wilfahrt
-
-    This file is part of JSXGraph.
-
-    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
-
-    You can redistribute it and/or modify it under the terms of the
-
-      * GNU Lesser General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version
-      OR
-      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
-
-    JSXGraph is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License and
-    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
-    and <https://opensource.org/licenses/MIT/>.
- */
+.beleza{
+    display:grid;
+    grid-template-columns: 1fr 1fr ;
+    background-color: #ffe8673f;
+}
 
 .jxgbox {
     /* for IE 7 */
-    position: relative;
+    position: fixed;
     overflow: hidden;
     background-color: #fff;
     border-style: solid;
     border-width: 1px;
-    border-color: #356aa0;
+    border-color: #62240a;
     border-radius: 10px;
     -webkit-border-radius: 10px;
-    margin: 0;
+    margin-top: 10px;
+    margin-left: 10px;
     -ms-touch-action: none;
     /* "touch-action: none;" is set with JavaScript. */
 }
@@ -53,6 +26,40 @@
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+}
+
+.bota{
+    justify-self: center;
+    align-items: center;
+    margin: auto;
+}
+
+.bota input{
+    border-style: solid;
+    border-width: thin;
+    border-radius: 7px;
+    border-color: #62240a;
+    margin-top: 6px;
+    margin-bottom: 6px;
+    padding: 5px;
+}
+
+.bota button{
+    border-style: solid;
+    border-width: thin;
+    border-radius: 7px;
+    border-color: #62240a;
+    margin: 5px;
+    background-color: #ffeac8;
+}
+.bota select{
+    border-style: solid;
+    border-width: thin;
+    border-radius: 7px;
+    border-color: #62240a;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    background-color: #ffeac8;
 }
 
 .JXGtext {
@@ -237,3 +244,37 @@
     border-color: #f0e442;
     padding: 1px 7px 1px 7px;
 }
+
+/*
+    JSXGraph 1.12.2
+
+    Copyright 2008-2025
+        Matthias Ehmann,
+        Michael Gerhaeuser,
+        Carsten Miller,
+        Bianca Valentin,
+        Andreas Walter,
+        Alfred Wassermann,
+        Peter Wilfahrt
+
+    This file is part of JSXGraph.
+
+    JSXGraph is free software dual licensed under the GNU LGPL or MIT License.
+
+    You can redistribute it and/or modify it under the terms of the
+
+      * GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version
+      OR
+      * MIT License: https://github.com/jsxgraph/jsxgraph/blob/master/LICENSE.MIT
+
+    JSXGraph is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License and
+    the MIT License along with JSXGraph. If not, see <https://www.gnu.org/licenses/>
+    and <https://opensource.org/licenses/MIT/>.
+ */
