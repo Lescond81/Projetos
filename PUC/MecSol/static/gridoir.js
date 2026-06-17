@@ -195,13 +195,13 @@ function criarPino(noId){
 // Função para criar um rolete(por acaso triangular tambem...)
 function criarRolete(noId){
 
-    const r =nos[noId];
+    const r = nos[noId];
 
     board.create(
         "circle",
         [
-            [nos[nodeId].x-0.15,
-             nos[nodeId].y-0.6],
+            [nos[noId].x-0.15,
+             nos[noId].y-0.6],
             0.05
         ]
     );
@@ -209,8 +209,8 @@ function criarRolete(noId){
     board.create(
         "circle",
         [
-            [nos[nodeId].x+0.15,
-             nos[nodeId].y-0.6],
+            [nos[noId].x+0.15,
+             nos[noId].y-0.6],
             0.05
         ]
     );
