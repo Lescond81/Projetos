@@ -30,7 +30,24 @@ def verificar_cruzamentos(nos, barras):
             if segmentos_cruzam(p1, p2, p3, p4):
                 cruzamentos.append(f"Barra {i} cruza com Barra {j}")
         return cruzamentos
-    
+
+def calcular_momentos(nos, forcas):
+    momentos = {}
+
+    for i, no in enumerate(nos):
+        momento_total = 0
+        for f in forcas:
+            #distancia da forca do nó ate nó atual
+            dx = nos[f["no"]][0] - no[0]
+            dy = nos[f["no"]][1] - no[1]
+
+            #momento = fx * dy - fy * dx
+            momento = f["fx"] * dy - f["fy"] * dx
+            momento_total += momento
+        
+        momentos[i] = round(momento_total, 4)
+
+    return momentos
 
 # CÁLCULO DE TRELIÇA!!!
 def solve(dados: dict):
@@ -69,7 +86,8 @@ def solve(dados: dict):
                 A[2*no+1, col] = 1; col += 1
 
         x = np.linalg.solve(A,b)
-        return {"status": "sucesso", "resultados": x.tolist()}
+        return {"status": "sucesso", "resultados": x.tolist()}   
+
 
     try:
         nos = dados["nos"]
@@ -103,10 +121,15 @@ def solve(dados: dict):
 
             nova_forca = {"no": f["no"], "fx": valor_fx, "fy": valor_fy}
             forcas_lista.append(nova_forca)
-
-        # chama o cálculo :)
-        return resolver_trelica(nos_lista, barras_lista, suporte, forcas_lista)
+        
+        momentos = calcular_momentos(nos_lista, forcas_lista)
     
+        # chama o cálculo :)
+        resultado = resolver_trelica(nos_lista, barras_lista, suporte, forcas_lista)
+        resultado["momentos"] = momentos 
+
+        return resultado
+
 
     except KeyError:
         return {"erro": "Você esqueceu de enviar um campo obrigatório!!!"}
