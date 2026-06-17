@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask import render_template
-#from Back import *
+from Back import solve
 
 app = Flask(__name__)
 CORS(app)
@@ -15,15 +15,10 @@ def homepage():
 def calcular():
     info = request.get_json()
 
-    nos = info["nos"]
-    barras = info["barras"]
-    forcas = info["forcas"]
-    suporte = info["suporte"]
+    resultado = solve(info)
 
-    #result = 
-
-    return jsonify({"result": "placeholder"}) #temporario
+    return jsonify(resultado) 
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

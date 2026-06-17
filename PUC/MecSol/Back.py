@@ -34,9 +34,9 @@ def verificar_cruzamentos(nos, barras):
 
 # CÁLCULO DE TRELIÇA!!!
 def solve(dados: dict):
-    def resolver_trelica(nos, barras, vinculos, forcas):
+    def resolver_trelica(nos, barras, suporte, forcas):
         N, M = len(nos), len(barras)
-        n_reacoes = sum([2 if v["tipo"] == "pino" else 1 for v in vinculos])
+        n_reacoes = sum([2 if v["tipo"] == "pino" else 1 for v in suporte])
         graus_de_lib = 2 * N
 
         if graus_de_lib != M + n_reacoes:
@@ -61,7 +61,7 @@ def solve(dados: dict):
             b[2*no+1] = f["fy"]
 
         col = M
-        for v in vinculos: 
+        for v in suporte: 
             no = v["no"]
             if v["tipo"] == "pino":
                 A[2*no, col] = 1; A[2*no+1, col+1] = 1; col += 2
@@ -76,10 +76,10 @@ def solve(dados: dict):
         barras = dados["barras"]
         forcas = dados["forcas"]
 
-        if "vinculos" in dados:
-            vinculos = dados["vinculos"]
+        if "suporte" in dados:
+            suporte = dados["suporte"]
         else:
-            vinculos = []   # cria lista vazia
+            suporte = []   # cria lista vazia
 
         nos_lista = [[n["x"], n["y"]] for n in nos]
         barras_lista = [[b["start"], b["end"]] for b in barras]
@@ -105,7 +105,7 @@ def solve(dados: dict):
             forcas_lista.append(nova_forca)
 
         # chama o cálculo :)
-        return resolver_trelica(nos_lista, barras_lista, vinculos, forcas_lista)
+        return resolver_trelica(nos_lista, barras_lista, suporte, forcas_lista)
     
 
     except KeyError:
