@@ -158,7 +158,13 @@ Aplicar.addEventListener('click', () => {
 
     aplicarForca(ponto,modulo,dir);
 
-    forcas.push({ no: ponto, modulo, direcao: dir});
+    let fx = 0, fy = 0;
+    if (dir === "up") fy = modulo
+    if (dir === "down") fy = -modulo
+    if (dir === "left") fx = modulo
+    if (dir === "right") fx = -modulo
+
+    forcas.push({ no: ponto, fx, fy});
       
 });
 
@@ -195,7 +201,7 @@ function criarPino(noId){
 // Função para criar um rolete(por acaso triangular tambem...)
 function criarRolete(noId){
 
-    const r = nos[noId];
+    const r =nos[noId];
 
     board.create(
         "circle",
@@ -226,9 +232,9 @@ Apoio.addEventListener('click', () => {
         document.getElementById("tipo").value
 
     if(tipo==="pino")
-        criarPino(nos); 
+        criarPino(pApoio); 
     if(tipo==="rolete")
-        criarRolete(nos);
+        criarRolete(pApoio);
 
     suporte.push({ no: pApoio, tipo});
 
@@ -257,7 +263,7 @@ document.getElementById("resumo").addEventListener("click", () => {
     if(forcas.length === 0) html += "<p>Nenhuma força aplicada</p>";
     forcas.forEach((f, i) => {
         const seta = { up:"↑", down:"↓", left:"←", right:"→" };
-        html += `<p>Força ${i}: Nó ${f.no} — ${f.modulo}N ${seta[f.direcao]}</p>`;
+        html += `<p>Força ${i}: Nó ${f.no} — fx: ${f.fx}N, fy: ${f.fy}N</p>`;
     });
 
     // apoios
@@ -279,15 +285,20 @@ document.getElementById("fechar").addEventListener("click", () => {
 });
 
 
-/*document.getElementById("Calcular").addEventListener("click", async() => {
+document.querySelector(".Calcular").addEventListener("click", async() => {
     const Response = await fetch("http://127.0.0.1:5000/Back", {
     method: 'POST',
     headers: {"Content-type": 'application/JSON'},
-    body: JSON.stringify({nos, barras, forcas, suporte})
+    body: JSON.stringify({nos, barras, suporte, forcas})
 });
 
-const info = await Response.json();
-console.log(resultado); // mudar para o resultado depois
-})*/
+const resultado = await Response.json();
+
+if (resultado.erro){
+    alert ("Erro " + resultado.erro);
+} else {
+    alert ("Resultados " + resultado.resultados.join(", "));
+}
+})
 
 
