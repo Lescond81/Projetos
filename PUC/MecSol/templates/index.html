@@ -2,13 +2,24 @@
     <html>
         <head>
             <title>Tavalendo</title>
-            <script src="../static/jsxgraphcore.js"></script>
-            <link rel="stylesheet" type="text/css" href="../static/jsxgraph.css">
+            <script src="{{ url_for('static', filename='jsxgraphcore.js') }}"></script>
+            <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='jsxgraph.css') }}">
         </head>
-        <body>
+
+        <body class="beleza">
+            <div id="modal" style="display: none; position: fixed; top: 50%;
+                            left: 50%; transform: translate(-50%, -50%); background-color: #fdf8d8; 
+                            padding: 30px; border-width: thin; border-color: #62240a; border-style: solid; border-radius: 8px;
+                            max-height: 80vb; overflow-y: auto; z-index: 9999;">
+                <h3>Pontos e Forças</h3>
+                <div id="conteudo-modal"></div>
+                <button type="button" id="fechar">Fechar</button>
+            </div>
+            <div id="overlay" style="display:none; position:fixed; top:0; left:0; 
+                              width:100%; height:100%;background:rgba(0,0,0,0.5);  z-index: 9998;"></div>
 
             <!--Criando o plano cartesiano-->
-            <div id="box" class="jxgbox" style="width:500px; aspect-ratio: 1/1;"></div>
+            <div id="box" class="jxgbox" style="width:95%; aspect-ratio: 1/1;"></div>
             <script>
                 var board = JXG.JSXGraph.initBoard(
                     'box', {
@@ -18,53 +29,51 @@
             </script>
 
             
-            <article>
-                <header>
-                    <table>
-                        <tr>
-                            <!--Lugar para digitar os valores da Treliça-->
-                            <input id="x" placeholder="X">
-                            <input id="y" placeholder="Y">
-                            <button id="Butao">Submit</button>
+            <section class="bota" >
+                
+                <!--Lugar para digitar os valores da Treliça-->
+                <input id="x" placeholder="X">
+                <input id="y" placeholder="Y">
+                <button type="button" id="Butao">Submit</button>
+                
+                <!--Botão para conectar-->
+                <div>
+                    <input id="prim" placeholder="Digite o primeiro ponto">
+                    <input id="seg" placeholder="Digite o segundo ponto">
+                    <button type="button" id="connect">Conectar</button>
+                </div>
 
-                            <!--Botão para conectar-->
-                            <div>
-                                <input id="prim" placeholder="Digite o primeiro ponto">
-                                <input id="seg" placeholder="Digite o segundo ponto">
-                                <button id="connect">Conectar</button>
-                            </div>
+                <!--Adicionando as forças-->
+                <div>
+                    <input id="ponto" placeholder="Digite um ponto">
+                    <input id="modulo" placeholder="Digite a força">
+                    <select id="direcao">
+                        <option value="up">↑</option>
+                        <option value="down">↓</option>
+                        <option value="left">←</option>
+                        <option value="right">→</option>
+                    </select>
+                    <button type="button" id="ap_forca">Aplicar</button>
+                </div>
 
-                            <!--Adicionando as forças-->
-                            <div>
-                                <input id="ponto" placeholder="Digite um ponto">
-                                <input id="modulo" placeholder="Digite a força">
-                                <select id="direcao">
-                                    <option value="up">↑</option>
-                                    <option value="down">↓</option>
-                                    <option value="left">←</option>
-                                    <option value="right">→</option>
-                                </select>
-                                <button id="ap_forca">Aplicar</button>
-                            </div>
-
-                            <!--Apoios-->
-                            <div>
-                                <input id="pApoio" placeholder="Ponto de apoio">
-                                <select id="tipo">
-                                    <option value="pino">Pino</option>
-                                    <option value="rolete">Rolete</option>
-                                </select>
-                                <button id="Ap_apoio">Apoio</button>
-                            </div>
+                <!--Apoios-->
+                <div>
+                    <input id="pApoio" placeholder="Ponto de apoio">
+                    <select id="tipo">
+                        <option value="pino">Pino</option>
+                        <option value="rolete">Rolete</option>
+                    </select>
+                    <button type="button" id="Ap_apoio">Apoio</button>
+                </div>
                             
-                            <th><button class="Treli"><a href=""></button></th>
-                            <th><p><button class ="Metro"><a href=""></a></button></p></th>
-                            <th><p><button class ="Angul"><a href=""></a></button></p></th>
-                        </tr>
-                    </table>
-                </header>
-            </article>
+                <button type="button" class="Calcular">Calcular</button>
+                <button type="button" id="resumo">Pontos e Forças</button>
+
+                <button type="button" class ="Angul"></button></p>
+
+            </section>
+
+            <!--Adicionar elementos-->
+            <script src="{{ url_for('static', filename='gridoir.js') }}"></script>
         </body>
-        <!--Adicionar elementos-->
-        <script src="../static/gridoir.js"></script>
     </html>
