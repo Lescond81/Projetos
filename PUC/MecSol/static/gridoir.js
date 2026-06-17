@@ -290,15 +290,59 @@ document.querySelector(".Calcular").addEventListener("click", async() => {
     method: 'POST',
     headers: {"Content-type": 'application/JSON'},
     body: JSON.stringify({nos, barras, suporte, forcas})
+    });
+
+    const resultado = await Response.json();
+    console.log(resultado);
+
+    const div = document.querySelector(".results");
+
+    if (resultado.erro){
+        div.innerHTML = '<h3>Resultados:</h3><p style = "color: red;">Erro: ${resultado.erro}</p>';
+        return;
+    }
+
+    const res = resultado.resultados;
+    const momento = resultado.momentos;
+    let html = "<h3>Resultados:</h3>";
+
+    //Barras
+    html += "<h4>Forças nas Barras</h4>";
+    barras.forEach((b,i) => {
+        const valor = res[i];
+        const valorAbs = Math.abs(valor).toFixed(4);
+        let status = "";
+        if (Math.abs(valor) < 1e-8) {
+            status = "⚪ Força Zero";
+        } else if (valor > 0) {
+            status = "🔴 Tração";
+        } else {
+            status = "🔵 Compressão";
+        }
+        html += `<p>Barra ${i} (Nó ${b.start} → Nó ${b.end}): <b>${valorAbs} N</b> — ${status}</p>`;
+    });
+
+    //Vínculos
+    html += "<h4>Reações nos Vínculos</h4>";
+    let col = barras.length;
+    suporte.forEach((s,i) => {
+        if (s.tipo === "pino") {
+            html += `<p>Vínculo ${i} - Nó ${s.no} (Pino): Rx = <b>${res[col].toFixed(4)} N</b>, Ry = <b>${res[col+1].toFixed(4)} N</b></p>`;
+            col += 2;
+        } else {
+            html += `<p>Vínculo ${i} — Nó ${s.no} (Rolete): Ry = <b>${res[col].toFixed(4)} N</b></p>`;
+            col += 1;
+        }
+    });
+
+    //Momentos
+    html += "<h4>Momentos em Relação aos Nós</h4>";
+    Object.entries(momento).forEach(([noId, momento]) => {
+        const sentido = momento > 0 ? "↺ Anti-horário" : momento < 0 ? "↻ Horário" : "Zero";
+        html += `<p>Nó ${noId}: <b>${Math.abs(momento).toFixed(4)} N·m</b> — ${sentido}</p>`;
+    });
+
+    div.innerHTML = html;
+
 });
-
-const resultado = await Response.json();
-
-if (resultado.erro){
-    alert ("Erro " + resultado.erro);
-} else {
-    alert ("Resultados " + resultado.resultados.join(", "));
-}
-})
-
 
