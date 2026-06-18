@@ -109,16 +109,16 @@ function aplicarForca(
     let dy = 0;
 
     if(direcao==="up")
-        dy = -modul;
-
-    if(direcao==="down")
         dy = modul;
 
+    if(direcao==="down")
+        dy = -modul;
+
     if(direcao==="right")
-        dx = -modul;
+        dx = modul;
 
     if(direcao==="left")
-        dx = modul;
+        dx = -modul;
 
     const scale = 1;
     const end =
